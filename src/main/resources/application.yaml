@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: request-approval-service
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/requestApprovalDb
+    username: postgres
+    password: "@Collins20"
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+
+  sql:
+    init:
+      mode: never
+
+server:
+  port: 8080
