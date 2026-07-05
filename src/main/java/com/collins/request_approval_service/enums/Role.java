@@ -17,5 +17,5 @@ public enum Role {
 
     HR("Human_Resource_Management");
 
-    private final String userRole;
+    private final String role;
 }

@@ -17,5 +17,5 @@ public enum Department {
 
     SALES("Sales");
 
-    private final String userDepartment;
+    private final String department;
 }
