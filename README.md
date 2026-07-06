@@ -220,7 +220,7 @@ Some areas that can be added in future iterations include:
 
 ## Author
 
-**Collins Okafor**
+**Okafor Collins Daberechukwu**
 
 Backend Software Engineer
 
