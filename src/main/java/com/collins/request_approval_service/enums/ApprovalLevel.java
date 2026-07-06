@@ -13,7 +13,7 @@ public enum ApprovalLevel {
 
     FINANCE("Finance"),
 
-    HR("Human_Resource_Managment"),
+    HR("Human_Resource_Management"),
 
     COMPLETED("Completed");
 

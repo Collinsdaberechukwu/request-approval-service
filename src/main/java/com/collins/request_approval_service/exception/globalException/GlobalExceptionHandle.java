@@ -1,6 +1,9 @@
 package com.collins.request_approval_service.exception.globalException;
 
 import com.collins.request_approval_service.dto.ErrorResponseDto;
+import com.collins.request_approval_service.exception.BadRequestsException;
+import com.collins.request_approval_service.exception.InvalidApprovalException;
+import com.collins.request_approval_service.exception.RequestAlreadyExistException;
 import com.collins.request_approval_service.exception.ResourceNotFoundException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -65,5 +68,44 @@ public class GlobalExceptionHandle extends ResponseEntityExceptionHandler {
         );
 
         return new ResponseEntity<>(errorResponseDto,HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(RequestAlreadyExistException.class)
+    public ResponseEntity<ErrorResponseDto> handleRequestAlreadyExistException(Exception exception,WebRequest webRequest){
+
+        ErrorResponseDto errorResponseDto = new ErrorResponseDto(
+                webRequest.getDescription(false),
+                HttpStatus.BAD_REQUEST,
+                exception.getMessage(),
+                LocalDateTime.now()
+        );
+
+        return new ResponseEntity<>(errorResponseDto,HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidApprovalException.class)
+    public ResponseEntity<ErrorResponseDto> handleInvalidApprovalException(Exception exception,WebRequest webRequest){
+
+        ErrorResponseDto errorResponseDto = new ErrorResponseDto(
+                webRequest.getDescription(false),
+                HttpStatus.BAD_REQUEST,
+                exception.getMessage(),
+                LocalDateTime.now()
+        );
+
+        return new ResponseEntity<>(errorResponseDto,HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(BadRequestsException.class)
+    public ResponseEntity<ErrorResponseDto> handleBadRequestsException(Exception exception,WebRequest webRequest){
+
+        ErrorResponseDto errorResponseDto = new ErrorResponseDto(
+                webRequest.getDescription(false),
+                HttpStatus.BAD_REQUEST,
+                exception.getMessage(),
+                LocalDateTime.now()
+        );
+
+        return new ResponseEntity<>(errorResponseDto,HttpStatus.BAD_REQUEST);
     }
 }
