@@ -2,22 +2,22 @@
 
 ## Overview
 
-The Request Approval Service is a Spring Boot application that manages the lifecycle of employee requests before they are approved. It provides endpoints for creating, updating, retrieving, deleting, and listing requests while enforcing the business rules around who can create a request and when it can be modified.
+The Request Approval Service is a Spring Boot application that manages the lifecycle of employee requests from submission through the approval process. It exposes REST endpoints for creating, retrieving, updating, deleting, and listing requests while enforcing the business rules that determine who can submit a request and when it can be modified.
 
-The service was designed with a clear separation of responsibilities by using service, repository, mapper, and DTO layers to keep the codebase easy to maintain and extend.
+The project follows a layered architecture with clear separation between controllers, services, repositories, mappers, and DTOs. This keeps the codebase maintainable, easier to test, and straightforward to extend as new requirements are introduced.
 
 ---
 
 ## Features
 
 * Create a new request
-* Retrieve a request by its ID
-* Update an existing request
-* Delete a request
-* View pending requests with pagination
-* Retrieve users and list all users
+* Retrieve a request by ID
+* Update a pending request
+* Delete a pending request
+* Retrieve pending requests with pagination
+* Retrieve a single user or list all users
 * Prevent duplicate pending requests
-* Validate user eligibility before creating a request
+* Validate user eligibility before request creation
 * Consistent API response structure
 * Transaction management for write operations
 * Centralized exception handling
@@ -26,29 +26,23 @@ The service was designed with a clear separation of responsibilities by using se
 
 ## Business Rules
 
-The following rules are enforced by the application:
-
 ### Request Creation
 
-* Only active users are allowed to create requests.
-* Only users with the **EMPLOYEE** role can submit requests.
+* Only active users can create requests.
+* Only users with the **EMPLOYEE** role are allowed to submit requests.
 * A user cannot create another pending request with the same title.
-* Every newly created request starts with:
+* Every new request is created with:
 
   * **Status:** `PENDING`
-  * **Initial Approval Level:** `MANAGER`
+  * **Approval Level:** `MANAGER`
 
 ### Request Update
 
-A request can only be updated while it is still in the **PENDING** state.
-
-Once a request has entered the approval process or has already been approved, it can no longer be modified.
+A request can only be updated while its status is **PENDING**. Once the approval process has started or the request has been approved, further modifications are not allowed.
 
 ### Request Deletion
 
-Only pending requests can be deleted.
-
-Approved or processed requests are protected from deletion to preserve the approval history.
+Only requests that are still pending can be deleted. Processed or approved requests are retained to preserve the integrity of the approval history.
 
 ---
 
@@ -62,6 +56,7 @@ Approved or processed requests are protected from deletion to preserve the appro
 * Lombok
 * Docker
 * Docker Compose
+* Springdoc OpenAPI (Swagger)
 
 ---
 
@@ -71,9 +66,9 @@ Approved or processed requests are protected from deletion to preserve the appro
 src
 ├── controller
 ├── dto
-│   ├── Request
-│   ├── Response
-│   └── Update
+│   ├── request
+│   ├── response
+│   └── update
 ├── enums
 ├── exception
 ├── mapper
@@ -84,29 +79,29 @@ src
 └── config
 ```
 
-The project follows a layered architecture where each layer has a single responsibility.
+The project follows a layered architecture where each layer has a clearly defined responsibility.
 
-* **Controller** handles incoming requests.
-* **Service** contains the business logic.
-* **Repository** communicates with the database.
-* **Mapper** converts entities to DTOs and vice versa.
-* **DTOs** isolate API models from persistence models.
+* **Controller** – Handles incoming HTTP requests and returns API responses.
+* **Service** – Contains the application's business logic.
+* **Repository** – Handles data access using Spring Data JPA.
+* **Mapper** – Converts entities to DTOs and vice versa.
+* **DTOs** – Define the request and response models exposed by the API.
 
 ---
 
 ## API Endpoints
 
-### Requests
+### Request Endpoints
 
 | Method | Endpoint            | Description               |
 | ------ | ------------------- | ------------------------- |
 | POST   | `/requests`         | Create a new request      |
-| GET    | `/requests/{id}`    | Retrieve a request        |
+| GET    | `/requests/{id}`    | Retrieve a request by ID  |
 | PUT    | `/requests/{id}`    | Update a pending request  |
 | DELETE | `/requests/{id}`    | Delete a pending request  |
 | GET    | `/requests/pending` | Retrieve pending requests |
 
-### Users
+### User Endpoints
 
 | Method | Endpoint      | Description        |
 | ------ | ------------- | ------------------ |
@@ -115,26 +110,56 @@ The project follows a layered architecture where each layer has a single respons
 
 ---
 
+## API Documentation
+
+The project includes Swagger/OpenAPI documentation to make it easier to explore and test the available endpoints during development.
+
+Once the application is running, the documentation can be accessed from:
+
+**Swagger UI**
+
+```text
+http://localhost:8080/swagger-ui/index.html
+```
+
+**OpenAPI Specification**
+
+```text
+http://localhost:8080/v3/api-docs
+```
+
+The documentation provides:
+
+* Available endpoints
+* Request and response models
+* HTTP status codes
+* Request parameters
+* Example payloads
+
+This makes it easier to understand the API without referring directly to the source code.
+
+---
+
 ## Validation
 
-The service validates incoming requests before any data is persisted.
+Incoming requests are validated before any data is written to the database.
 
-Examples include:
+Some of the validations include:
 
 * User must exist.
 * User must be active.
-* User must have the EMPLOYEE role.
+* User must have the **EMPLOYEE** role.
 * Duplicate pending requests are not allowed.
 * Only pending requests can be updated.
 * Only pending requests can be deleted.
 
-Whenever a validation fails, the service returns a meaningful error response describing the reason for the failure.
+Whenever validation fails, the service returns a clear and meaningful error response describing the reason for the failure.
 
 ---
 
 ## Response Format
 
-Every endpoint returns a consistent response structure.
+Every endpoint follows the same response structure.
 
 ```json
 {
@@ -144,13 +169,13 @@ Every endpoint returns a consistent response structure.
 }
 ```
 
-This keeps the API predictable and simplifies client-side integration.
+Keeping responses consistent makes it easier for clients to consume the API and handle responses in a predictable way.
 
 ---
 
 ## Logging
 
-Application events are logged at the service layer to make troubleshooting easier.
+The service logs important application events to simplify monitoring and troubleshooting.
 
 Examples include:
 
@@ -159,25 +184,25 @@ Examples include:
 * Pending request lookup
 * User retrieval
 
-Logging focuses on business events without exposing sensitive information.
+Logging is focused on business operations while avoiding the exposure of sensitive information.
 
 ---
 
 ## Running the Project
 
-### Clone the repository
+### Clone the Repository
 
 ```bash
-git clone <https://github.com/Collinsdaberechukwu/request-approval-service.git>
+git clone https://github.com/Collinsdaberechukwu/request-approval-service.git
 ```
 
-### Build the application
+### Build the Project
 
 ```bash
 mvn clean install
 ```
 
-### Run locally
+### Run Locally
 
 ```bash
 mvn spring-boot:run
@@ -193,28 +218,28 @@ docker compose up --build
 
 ## Design Considerations
 
-A few implementation decisions were made to improve reliability and maintainability:
+A few implementation decisions were made to keep the application reliable and maintainable.
 
-* DTOs are used to avoid exposing entity models directly.
-* Mapping logic is separated from business logic.
+* DTOs are used to separate API models from persistence models.
+* Mapping logic is isolated from business logic.
 * Transactions are applied to write operations to maintain data consistency.
-* Business validation is centralized within the service layer instead of controllers.
-* Repository methods with locking are used where updates require concurrency protection.
+* Business rules are enforced within the service layer rather than controllers.
+* Repository methods that require updates use locking where appropriate to reduce concurrency issues.
 
 ---
 
 ## Future Improvements
 
-Some areas that can be added in future iterations include:
+Some enhancements that could be introduced in future versions include:
 
-* Authentication and authorization using JWT or OAuth2
-* Role-based endpoint security with Spring Security
+* JWT or OAuth2 authentication
+* Role-based authorization with Spring Security
 * Multi-level approval workflow
 * Approval history and audit trail
-* Email or event-based notifications
+* Email or event-driven notifications
 * Request search and filtering
 * Unit and integration test coverage
-* Request approval metrics and reporting
+* Request approval analytics and reporting
 
 ---
 
@@ -224,5 +249,4 @@ Some areas that can be added in future iterations include:
 
 Backend Software Engineer
 
-Specializing in building secure, scalable, and maintainable backend applications using Java and Spring Boot.
-
+Experienced in designing and building backend applications with Java and Spring Boot, with a focus on clean architecture, maintainable code, and scalable REST APIs.
