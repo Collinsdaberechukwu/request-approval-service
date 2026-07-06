@@ -213,9 +213,7 @@ Some areas that can be added in future iterations include:
 * Approval history and audit trail
 * Email or event-based notifications
 * Request search and filtering
-* API documentation with Swagger/OpenAPI
 * Unit and integration test coverage
-* Pagination metadata in API responses
 * Request approval metrics and reporting
 
 ---
