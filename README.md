@@ -168,7 +168,7 @@ Logging focuses on business events without exposing sensitive information.
 ### Clone the repository
 
 ```bash
-git clone <repository-url>
+git clone <https://github.com/Collinsdaberechukwu/request-approval-service.git>
 ```
 
 ### Build the application
